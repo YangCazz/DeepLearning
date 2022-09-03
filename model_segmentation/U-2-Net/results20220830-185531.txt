@@ -1,0 +1,2 @@
+[epoch: 180] train_loss: 0.1836 lr: 0.000500 MAE: 0.048 maxF1: 0.858 
+[epoch: 190] train_loss: 0.1768 lr: 0.000456 MAE: 0.049 maxF1: 0.853 

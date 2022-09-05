@@ -20,7 +20,7 @@ from sklearn.manifold import TSNE
 
 def evaluate_embeddings(embeddings):
 
-    X, Y = read_node_label('../data/flight/labels-brazil-airports.txt',skip_head=True)
+    X, Y = read_node_label('../../data/Graph_NN/flight/labels-brazil-airports.txt',skip_head=True)
 
     tr_frac = 0.8
 
@@ -38,7 +38,7 @@ def evaluate_embeddings(embeddings):
 
 def plot_embeddings(embeddings,):
 
-    X, Y = read_node_label('../data/flight/labels-brazil-airports.txt',skip_head=True)
+    X, Y = read_node_label('../../data/Graph_NN/flight/labels-brazil-airports.txt',skip_head=True)
 
 
 

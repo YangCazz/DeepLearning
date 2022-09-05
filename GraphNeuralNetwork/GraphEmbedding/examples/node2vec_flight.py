@@ -20,7 +20,7 @@ from sklearn.manifold import TSNE
 
 def evaluate_embeddings(embeddings):
 
-    X, Y = read_node_label('../data/flight/labels-brazil-airports.txt',skip_head=True)
+    X, Y = read_node_label('../../data/Graph_NN/flight/labels-brazil-airports.txt',skip_head=True)
 
     tr_frac = 0.8
 
@@ -38,7 +38,7 @@ def evaluate_embeddings(embeddings):
 
 def plot_embeddings(embeddings,):
 
-    X, Y = read_node_label('../data/flight/labels-brazil-airports.txt',skip_head=True)
+    X, Y = read_node_label('../../data/Graph_NN/flight/labels-brazil-airports.txt',skip_head=True)
 
 
 
@@ -77,7 +77,7 @@ def plot_embeddings(embeddings,):
     plt.show()
 
 if __name__ == "__main__":
-    G = nx.read_edgelist('../data/flight/brazil-airports.edgelist', create_using=nx.DiGraph(), nodetype=None,
+    G = nx.read_edgelist('../../data/Graph_NN/flight/brazil-airports.edgelist', create_using=nx.DiGraph(), nodetype=None,
                          data=[('weight', int)])
 
     model = Node2Vec(G, 10, 80, workers=1, p=0.25, q=2, use_rejection_sampling=0)

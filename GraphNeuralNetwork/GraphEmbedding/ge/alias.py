@@ -3,7 +3,6 @@ import numpy as np
 
 def create_alias_table(area_ratio):
     """
-
     :param area_ratio: sum(area_ratio)=1
     :return: accept,alias
     """
@@ -40,7 +39,6 @@ def create_alias_table(area_ratio):
 
 def alias_sample(accept, alias):
     """
-
     :param accept:
     :param alias:
     :return: sample index

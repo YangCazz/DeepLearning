@@ -1,4 +1,3 @@
-
 import numpy as np
 from ge.classify import read_node_label, Classifier
 from ge import DeepWalk
@@ -8,12 +7,12 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from sklearn.manifold import TSNE
 
-
+# 模型评估
 def evaluate_embeddings(embeddings):
     X, Y = read_node_label('../../data/Graph_NN/wiki/wiki_labels.txt')
     tr_frac = 0.8
-    print("Training classifier using {:.2f}% nodes...".format(
-        tr_frac * 100))
+    # print("Training classifier using {:.2f}% nodes...".format(tr_frac * 100))
+    print("正在使用 {:.2f}% 的节点数据进行模型训练...".format(tr_frac * 100))
     clf = Classifier(embeddings=embeddings, clf=LogisticRegression())
     clf.split_train_evaluate(X, Y, tr_frac)
 
@@ -26,6 +25,7 @@ def plot_embeddings(embeddings,):
         emb_list.append(embeddings[k])
     emb_list = np.array(emb_list)
 
+    # 采用TSNE进行降维, 128维降到2维
     model = TSNE(n_components=2)
     node_pos = model.fit_transform(emb_list)
 
@@ -37,16 +37,23 @@ def plot_embeddings(embeddings,):
     for c, idx in color_idx.items():
         plt.scatter(node_pos[idx, 0], node_pos[idx, 1], label=c)
     plt.legend()
+    # 将降维之后的数据进行展示
     plt.show()
 
 
 if __name__ == "__main__":
+    # 文件中保存的是一张图, 两列数据分别表示一条边的头和尾节点
+    # 这里则将文件中的数据用来构建图结构G
     G = nx.read_edgelist('../../data/Graph_NN/wiki/Wiki_edgelist.txt',
                          create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
 
+    # 采用DeepWalk模型, 随机游走的长度窗口为10,
     model = DeepWalk(G, walk_length=10, num_walks=80, workers=1)
+    # 模型训练,
     model.train(window_size=5, iter=3)
+    # 进行embedding
     embeddings = model.get_embeddings()
-
+    print(embeddings)
+    #
     evaluate_embeddings(embeddings)
     plot_embeddings(embeddings)

@@ -8,7 +8,9 @@ from joblib import Parallel, delayed
 from .alias import alias_sample, create_alias_table
 from .utils import partition_num
 
-
+# 搭建RandomWalk模型
+# 可重复访问节点的深度优先遍历算法
+# 这里参照了Node2Vec的思想, 引入了p和q两个权重, 用于调整遍历策略
 class RandomWalker:
     def __init__(self, G, p=1, q=1, use_rejection_sampling=False):
         """
@@ -22,25 +24,33 @@ class RandomWalker:
         self.q = q
         self.use_rejection_sampling = use_rejection_sampling
 
+    # 分别对DeepWalk和Node2Vec中的两种不同策略进行编写
+    # 1.DeepWalk, 深度遍历
+    # 路径过程中会以某一概率回到初始点, 也就是可能回退
     def deepwalk_walk(self, walk_length, start_node):
-
+        # 记录途径点, 记录在列表中
         walk = [start_node]
-
+        # 当满足窗口大小时则跳出循环
         while len(walk) < walk_length:
+            # 指向当前节点位置
             cur = walk[-1]
+            # 采用已有方法, 搜索节点邻居, 存储于列表list中[]
+            # 这里并没有排除已经走过的节点
             cur_nbrs = list(self.G.neighbors(cur))
+            # 非叶子节点则从邻居中随机选择一个
             if len(cur_nbrs) > 0:
+                # 加入途径列表
                 walk.append(random.choice(cur_nbrs))
             else:
                 break
         return walk
-
+    # 2.Node2Vec, 策略性深度遍历
     def node2vec_walk(self, walk_length, start_node):
 
         G = self.G
         alias_nodes = self.alias_nodes
         alias_edges = self.alias_edges
-
+        # 记录途径点, 记录在列表中
         walk = [start_node]
 
         while len(walk) < walk_length:
@@ -60,7 +70,7 @@ class RandomWalker:
                 break
 
         return walk
-
+    # 构建Node2Vec的改良架构
     def node2vec_walk2(self, walk_length, start_node):
         """
         Reference:
@@ -113,21 +123,22 @@ class RandomWalker:
             else:
                 break
         return walk
-
+    # 并行计算
     def simulate_walks(self, num_walks, walk_length, workers=1, verbose=0):
 
         G = self.G
 
         nodes = list(G.nodes())
 
+        # 为多进程并行时的任务分配操作
         results = Parallel(n_jobs=workers, verbose=verbose, )(
             delayed(self._simulate_walks)(nodes, num, walk_length) for num in
             partition_num(num_walks, workers))
-
+        #
         walks = list(itertools.chain(*results))
 
         return walks
-
+    # 并行子模块
     def _simulate_walks(self, nodes, num_walks, walk_length, ):
         walks = []
         for _ in range(num_walks):
